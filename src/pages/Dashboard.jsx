@@ -4,16 +4,11 @@ import {
   Award,
   FileCheck,
   GraduationCap,
-  TrendingUp,
-  AlertTriangle,
-  BookOpen,
   Sparkles,
-  CheckCircle2,
-  Clock,
+  BookOpen,
   ArrowRight,
-  ShieldAlert
 } from 'lucide-react';
-import { studentData } from '../data/mockData';
+import { useAcademic } from '../context/AcademicContext';
 import MetricCard from '../components/dashboard/MetricCard';
 import AcademicRiskCard from '../components/dashboard/AcademicRiskCard';
 import SubjectPerformanceChart from '../components/dashboard/SubjectPerformanceChart';
@@ -22,7 +17,8 @@ import AIRecommendationCard from '../components/dashboard/AIRecommendationCard';
 import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
-  const { name, department, year, semester, metrics, academicRisk, subjects, aiRecommendations } = studentData;
+  const { currentStudent } = useAcademic();
+  const { name, department, year, semester, metrics, academicRisk, subjects, aiRecommendations } = currentStudent;
 
   const weakSubject = subjects.find((s) => s.status === 'Weak') || subjects[0];
 
@@ -81,7 +77,7 @@ export default function Dashboard() {
           value={metrics.assignmentAverage}
           unit="%"
           target="80%"
-          subtitle="Evaluated across 8 submitted tasks"
+          subtitle="Evaluated across internal assignments"
           icon={FileCheck}
           color="indigo"
           progressValue={metrics.assignmentAverage}
@@ -94,7 +90,7 @@ export default function Dashboard() {
           value={metrics.examinationAverage}
           unit="%"
           target="75%"
-          subtitle="Based on Internal Tests 1 & 2"
+          subtitle="Based on Internal Tests 1, 2 & Model"
           icon={GraduationCap}
           color="rose"
           progressValue={metrics.examinationAverage}
@@ -133,7 +129,7 @@ export default function Dashboard() {
       </div>
 
       {/* AI Recommendations Hub Card */}
-      <AIRecommendationCard recommendations={aiRecommendations} />
+      <AIRecommendationCard recommendations={aiRecommendations || []} />
 
       {/* Quick Action Footer Bar */}
       <div className="bg-slate-900 rounded-2xl p-5 text-white flex flex-col sm:flex-row items-center justify-between gap-4 border border-slate-800 shadow-md">

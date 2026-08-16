@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Bell, Search, GraduationCap, ChevronDown, CheckCircle2, AlertTriangle, X } from 'lucide-react';
-import { studentData } from '../../data/mockData';
+import { Bell, Search, GraduationCap, CheckCircle2, AlertTriangle, X } from 'lucide-react';
+import { useAcademic } from '../../context/AcademicContext';
 
 export default function Header({ toggleSidebar, isSidebarOpen }) {
+  const { currentStudent } = useAcademic();
   const [showNotifications, setShowNotifications] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -10,16 +11,16 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
     {
       id: 1,
       type: 'warning',
-      title: 'Maths Internal-2 Score Updated',
-      time: '2 hours ago',
-      desc: 'Scored 62/100. Check recommended practice set.',
+      title: 'Maths Internal Score Recalculated',
+      time: 'Just now',
+      desc: `Current score: ${currentStudent.subjects[0]?.score}%. Faculty updated test marks.`,
     },
     {
       id: 2,
       type: 'critical',
-      title: 'Attendance Alert',
-      time: 'Yesterday',
-      desc: 'Overall attendance is 82%. Needs 85% for End-Sem clearance.',
+      title: 'Attendance Track',
+      time: 'Today',
+      desc: `Overall attendance is ${currentStudent.metrics.attendance}%. Needs 85% for End-Sem clearance.`,
     },
     {
       id: 3,
@@ -52,7 +53,7 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
           {/* Semester Badge */}
           <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50/80 border border-indigo-100 rounded-full text-indigo-700 text-xs font-semibold">
             <GraduationCap className="w-4 h-4 text-indigo-600" />
-            <span>{studentData.semester} • {studentData.batch}</span>
+            <span>{currentStudent.semester} • {currentStudent.batch}</span>
           </div>
 
           {/* Notifications */}
@@ -109,15 +110,17 @@ export default function Header({ toggleSidebar, isSidebarOpen }) {
 
           {/* Student Profile Quick View */}
           <div className="flex items-center gap-3 pl-2 sm:pl-3 border-l border-slate-200">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-400 text-white flex items-center justify-center font-bold text-sm shadow-sm ring-2 ring-indigo-100">
-              KV
-            </div>
+            <img
+              src={currentStudent.avatar}
+              alt={currentStudent.name}
+              className="w-9 h-9 rounded-xl object-cover ring-2 ring-indigo-100"
+            />
             <div className="hidden sm:block text-left">
               <div className="text-sm font-semibold text-slate-800 leading-tight">
-                {studentData.name}
+                {currentStudent.name}
               </div>
               <div className="text-[11px] text-slate-500 font-medium">
-                {studentData.id}
+                {currentStudent.id}
               </div>
             </div>
           </div>

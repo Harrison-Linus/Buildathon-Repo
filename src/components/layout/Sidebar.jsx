@@ -7,14 +7,16 @@ import {
   LogOut,
   GraduationCap,
   BookOpen,
-  CheckSquare,
   ShieldAlert,
-  ChevronRight
+  ChevronRight,
+  ArrowRightLeft,
+  Users,
 } from 'lucide-react';
-import { studentData } from '../../data/mockData';
+import { useAcademic } from '../../context/AcademicContext';
 
 export default function Sidebar({ isOpen, onClose }) {
   const navigate = useNavigate();
+  const { currentStudent, setRole } = useAcademic();
 
   const navItems = [
     {
@@ -38,6 +40,11 @@ export default function Sidebar({ isOpen, onClose }) {
       badgeColor: 'bg-indigo-100 text-indigo-700',
     },
   ];
+
+  const handleSwitchToTeacher = () => {
+    setRole('teacher');
+    navigate('/teacher/dashboard');
+  };
 
   const handleLogout = () => {
     navigate('/login');
@@ -76,24 +83,30 @@ export default function Sidebar({ isOpen, onClose }) {
         {/* Student Quick Profile Card */}
         <div className="p-4 mx-3 my-3 bg-slate-800/60 border border-slate-700/60 rounded-2xl">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-base shadow-sm">
-              KV
-            </div>
+            <img
+              src={currentStudent.avatar}
+              alt={currentStudent.name}
+              className="w-11 h-11 rounded-xl object-cover ring-2 ring-indigo-500/50"
+            />
             <div className="flex-1 min-w-0">
-              <h4 className="text-sm font-semibold text-white truncate">{studentData.name}</h4>
-              <p className="text-xs text-indigo-300 truncate">{studentData.department}</p>
-              <p className="text-[11px] text-slate-400 mt-0.5">{studentData.year} • {studentData.section}</p>
+              <h4 className="text-sm font-semibold text-white truncate">{currentStudent.name}</h4>
+              <p className="text-xs text-indigo-300 truncate">{currentStudent.department}</p>
+              <p className="text-[11px] text-slate-400 mt-0.5">{currentStudent.year} • {currentStudent.section}</p>
             </div>
           </div>
 
           <div className="mt-3 pt-3 border-t border-slate-700/50 grid grid-cols-2 gap-2 text-center text-xs">
             <div className="bg-slate-900/60 rounded-lg py-1.5 px-2">
               <div className="text-[10px] text-slate-400">Attendance</div>
-              <div className="font-bold text-emerald-400">{studentData.metrics.attendance}%</div>
+              <div className={`font-bold ${currentStudent.metrics.attendance < 85 ? 'text-rose-400' : 'text-emerald-400'}`}>
+                {currentStudent.metrics.attendance}%
+              </div>
             </div>
             <div className="bg-slate-900/60 rounded-lg py-1.5 px-2">
               <div className="text-[10px] text-slate-400">Academic Risk</div>
-              <div className="font-bold text-amber-400">{studentData.academicRisk.level}</div>
+              <div className={`font-bold ${currentStudent.academicRisk.level === 'High' ? 'text-rose-400' : currentStudent.academicRisk.level === 'Medium' ? 'text-amber-400' : 'text-emerald-400'}`}>
+                {currentStudent.academicRisk.level}
+              </div>
             </div>
           </div>
         </div>
@@ -139,6 +152,18 @@ export default function Sidebar({ isOpen, onClose }) {
               )}
             </NavLink>
           ))}
+
+          {/* Role Switcher Link */}
+          <button
+            onClick={handleSwitchToTeacher}
+            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium text-sm text-indigo-300 bg-indigo-900/30 border border-indigo-500/30 hover:bg-indigo-900/50 transition cursor-pointer mt-2"
+          >
+            <div className="flex items-center gap-3">
+              <Users className="w-5 h-5 text-indigo-400" />
+              <span>Teacher Dashboard</span>
+            </div>
+            <ArrowRightLeft className="w-4 h-4 text-indigo-400" />
+          </button>
 
           <div className="pt-4 px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
             Quick Shortcuts
